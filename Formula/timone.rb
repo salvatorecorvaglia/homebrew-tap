@@ -2,28 +2,28 @@
 class Timone < Formula
   desc "Read-only Kubernetes insights and diagnostics"
   homepage "https://github.com/salvatorecorvaglia/timone"
-  version "1.0.0"
+  version "1.1.0"
   license "MIT"
 
   on_macos do
     on_arm do
-      url "https://github.com/salvatorecorvaglia/timone/releases/download/v1.0.0/timone_1.0.0_darwin_arm64.tar.gz"
-      sha256 "cbe2a8528fe48c811bc9d5becd87dbdcd1e07f60f8933ff7f2a039a41747b58c"
+      url "https://github.com/salvatorecorvaglia/timone/releases/download/v1.1.0/timone_1.1.0_darwin_arm64.tar.gz"
+      sha256 "76783012b05f0ebb346de4d05beb99def8fac52beb787edaaf612d3d24f76fd5"
     end
     on_intel do
-      url "https://github.com/salvatorecorvaglia/timone/releases/download/v1.0.0/timone_1.0.0_darwin_amd64.tar.gz"
-      sha256 "3585b18a6ca058a96663369958536a9f3e841edb56ca636b9bc439a9ee8c47bc"
+      url "https://github.com/salvatorecorvaglia/timone/releases/download/v1.1.0/timone_1.1.0_darwin_amd64.tar.gz"
+      sha256 "cbb8985c87d4af4693087bd217d4e236ab77a78eeec2bdeed1269e0f5aa6aff3"
     end
   end
 
   on_linux do
     on_arm do
-      url "https://github.com/salvatorecorvaglia/timone/releases/download/v1.0.0/timone_1.0.0_linux_arm64.tar.gz"
-      sha256 "e6d06942b433fe5e5d15dcd82ee785c7da0025648165fa8f2c0d3be9b7caf72a"
+      url "https://github.com/salvatorecorvaglia/timone/releases/download/v1.1.0/timone_1.1.0_linux_arm64.tar.gz"
+      sha256 "d4c838e6662acb6f55a26ca98328bd50ba29fbb36e30709a2335f71332adb19b"
     end
     on_intel do
-      url "https://github.com/salvatorecorvaglia/timone/releases/download/v1.0.0/timone_1.0.0_linux_amd64.tar.gz"
-      sha256 "b98b70a6f986ca948a9785ed7cee2b8395966b0158606cc8c5b27a0e344b16d8"
+      url "https://github.com/salvatorecorvaglia/timone/releases/download/v1.1.0/timone_1.1.0_linux_amd64.tar.gz"
+      sha256 "4b10ba0706dd84ce566739d635e511725c5cf2aeb7610d5cb47da29c4847cfd8"
     end
   end
 
@@ -33,7 +33,32 @@ class Timone < Formula
   end
 
   test do
+    require "json"
+    require "timeout"
+
     assert_equal "Timone #{version}", shell_output("#{bin}/timone --version").strip
     assert_equal "Timone #{version}", shell_output("#{bin}/kubectl-timone --version").strip
+
+    port = free_port
+    environment = ENV.keys.grep(/^TIMONE_/).to_h { |key| [key, nil] }
+    environment.merge!("TIMONE_ENV" => "development", "KUBECONFIG" => (testpath/"missing-kubeconfig").to_s)
+    pid = spawn environment, bin/"timone", "--mode", "demo", "--no-browser",
+                "--listen", "127.0.0.1:#{port}", out: (testpath/"timone.log").to_s, err: [:child, :out]
+    begin
+      response = shell_output("curl --silent --show-error --fail --noproxy '*' " \
+                              "--retry 10 --retry-connrefused --retry-delay 1 --retry-max-time 15 " \
+                              "--connect-timeout 1 --max-time 2 http://127.0.0.1:#{port}/healthz")
+      assert_equal "ok", JSON.parse(response).fetch("status")
+    ensure
+      Process.kill("TERM", pid)
+      begin
+        _, status = Timeout.timeout(10) { Process.wait2(pid) }
+      rescue Timeout::Error
+        Process.kill("KILL", pid)
+        Process.wait(pid)
+        flunk "Timone did not shut down within 10 seconds"
+      end
+    end
+    assert_predicate status, :success?
   end
 end
