@@ -2,28 +2,28 @@
 class Timone < Formula
   desc "Read-only Kubernetes insights and diagnostics"
   homepage "https://github.com/salvatorecorvaglia/timone"
-  version "1.2.0"
+  version "1.3.0"
   license "MIT"
 
   on_macos do
     on_arm do
-      url "https://github.com/salvatorecorvaglia/timone/releases/download/v1.2.0/timone_1.2.0_darwin_arm64.tar.gz"
-      sha256 "9c14b5625d8115b3b61937e69f1f7a7f98bce24162aeb9b9f248c74980c80790"
+      url "https://github.com/salvatorecorvaglia/timone/releases/download/v1.3.0/timone_1.3.0_darwin_arm64.tar.gz"
+      sha256 "35bb45778fde1f8d8866ddb7373b44a074f0c7588e7add1d9a8ca1808c37e4c4"
     end
     on_intel do
-      url "https://github.com/salvatorecorvaglia/timone/releases/download/v1.2.0/timone_1.2.0_darwin_amd64.tar.gz"
-      sha256 "833017b55146e1f4681aeac971523f4bc3dd50049d0e92fff2c343dd10d5612e"
+      url "https://github.com/salvatorecorvaglia/timone/releases/download/v1.3.0/timone_1.3.0_darwin_amd64.tar.gz"
+      sha256 "9c4ccfc3bda827a7de21762e9046fc233a34869a6a424f7958c040c689501656"
     end
   end
 
   on_linux do
     on_arm do
-      url "https://github.com/salvatorecorvaglia/timone/releases/download/v1.2.0/timone_1.2.0_linux_arm64.tar.gz"
-      sha256 "e19c0c24cdc910f537911b9ea3981d63880f6d87d4c26168dcfb0bd48054f67e"
+      url "https://github.com/salvatorecorvaglia/timone/releases/download/v1.3.0/timone_1.3.0_linux_arm64.tar.gz"
+      sha256 "6ae52fa32b56da700eb1e88dee6d2e9e26c09c2f2853661ea8291cb662533229"
     end
     on_intel do
-      url "https://github.com/salvatorecorvaglia/timone/releases/download/v1.2.0/timone_1.2.0_linux_amd64.tar.gz"
-      sha256 "8820c075913721e0a5cbf7c45c312b1bcbc01e9a85ea7137d176f977f9d2eff2"
+      url "https://github.com/salvatorecorvaglia/timone/releases/download/v1.3.0/timone_1.3.0_linux_amd64.tar.gz"
+      sha256 "9810b96675349e63fb19a681c7065bb1adaa2d896e6ca6b5af2cb69f6f57a274"
     end
   end
 
